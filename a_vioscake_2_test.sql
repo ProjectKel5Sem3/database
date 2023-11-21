@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 16 Nov 2023 pada 02.46
+-- Waktu pembuatan: 21 Nov 2023 pada 08.19
 -- Versi server: 10.4.27-MariaDB
 -- Versi PHP: 8.2.0
 
@@ -72,35 +72,47 @@ CREATE TABLE `detail_transaksi` (
   `status` enum('belum','proses','sudah') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data untuk tabel `detail_transaksi`
+-- Struktur dari tabel `gimmick`
 --
 
-INSERT INTO `detail_transaksi` (`id_transaksi`, `id_jenis`, `id_user`, `harga`, `total`, `tanggal`, `status`) VALUES
-(1, 1, 1, 10, 10, '2023-11-12 10:48:18', 'sudah'),
-(1, 1, 3, 10, 10, '2023-11-12 10:48:51', 'belum'),
-(1, 2, 1, 10, 10, '2023-11-12 10:48:51', 'proses');
+CREATE TABLE `gimmick` (
+  `id-gimmik` int(11) NOT NULL,
+  `nama` varchar(11) NOT NULL,
+  `harga` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `gimmick`
+--
+
+INSERT INTO `gimmick` (`id-gimmik`, `nama`, `harga`) VALUES
+(1, 'lilin', 3000),
+(2, 'buah-buakan', 2000);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `jenis_barang`
+-- Struktur dari tabel `katalog`
 --
 
-CREATE TABLE `jenis_barang` (
+CREATE TABLE `katalog` (
   `id_jenis` int(11) NOT NULL,
   `nama_jenis` varchar(225) NOT NULL,
   `harga_jenis` int(11) NOT NULL,
+  `diameter_kue` int(11) NOT NULL,
   `keterangan` varchar(225) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `jenis_barang`
+-- Dumping data untuk tabel `katalog`
 --
 
-INSERT INTO `jenis_barang` (`id_jenis`, `nama_jenis`, `harga_jenis`, `keterangan`) VALUES
-(1, 'das', 12, 'aas'),
-(2, 'dsas', 12, 'aas');
+INSERT INTO `katalog` (`id_jenis`, `nama_jenis`, `harga_jenis`, `diameter_kue`, `keterangan`) VALUES
+(1, 'kue 2cm', 20000, 2, ''),
+(2, 'kue besar', 100000, 100, '');
 
 -- --------------------------------------------------------
 
@@ -130,12 +142,12 @@ INSERT INTO `transaksi` (`id_transaksi`, `waktu`, `total`) VALUES
 
 CREATE TABLE `user` (
   `id_user` int(11) NOT NULL,
-  `email` varchar(225) NOT NULL,
-  `pass` varchar(11) NOT NULL,
-  `nama` varchar(225) NOT NULL,
-  `telp` text NOT NULL,
+  `user_email` varchar(225) NOT NULL,
+  `user_password` varchar(11) NOT NULL,
+  `user_fullname` varchar(225) NOT NULL,
+  `telp` varchar(15) NOT NULL,
   `alamat` varchar(225) NOT NULL,
-  `picture` text NOT NULL,
+  `pict` text NOT NULL,
   `id_level` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -143,10 +155,11 @@ CREATE TABLE `user` (
 -- Dumping data untuk tabel `user`
 --
 
-INSERT INTO `user` (`id_user`, `email`, `pass`, `nama`, `telp`, `alamat`, `picture`, `id_level`) VALUES
-(1, 'a2@gmail.com', '111', 'das', '1212', '', '', 1),
-(2, 'a1@gmail.com', '111', 'da2s', '1212', '', '', 2),
-(3, 'a3@gmail.com', '111', 'da2s', '1212', '', '', 2);
+INSERT INTO `user` (`id_user`, `user_email`, `user_password`, `user_fullname`, `telp`, `alamat`, `pict`, `id_level`) VALUES
+(10, 'admin@gmail.com', '123', 'admin', '085335114721', 'maina', '4.png', 1),
+(11, 'daas@gmail.com', '1111', 'dana', '', '', '', 2),
+(15, 'das@gmail.com', '1111', 'dana', '', '', '', 2),
+(16, 'izzulhaqzaindimas@gmail.com', '170845', 'dana', '', '', '', 2);
 
 -- --------------------------------------------------------
 
@@ -195,9 +208,15 @@ ALTER TABLE `detail_transaksi`
   ADD KEY `c4` (`id_user`);
 
 --
--- Indeks untuk tabel `jenis_barang`
+-- Indeks untuk tabel `gimmick`
 --
-ALTER TABLE `jenis_barang`
+ALTER TABLE `gimmick`
+  ADD PRIMARY KEY (`id-gimmik`);
+
+--
+-- Indeks untuk tabel `katalog`
+--
+ALTER TABLE `katalog`
   ADD PRIMARY KEY (`id_jenis`);
 
 --
@@ -211,6 +230,7 @@ ALTER TABLE `transaksi`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id_user`),
+  ADD UNIQUE KEY `user_email` (`user_email`,`telp`,`pict`) USING HASH,
   ADD KEY `c1` (`id_level`);
 
 --
@@ -236,9 +256,15 @@ ALTER TABLE `design_barang`
   MODIFY `id_desain` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT untuk tabel `jenis_barang`
+-- AUTO_INCREMENT untuk tabel `gimmick`
 --
-ALTER TABLE `jenis_barang`
+ALTER TABLE `gimmick`
+  MODIFY `id-gimmik` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT untuk tabel `katalog`
+--
+ALTER TABLE `katalog`
   MODIFY `id_jenis` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
@@ -251,7 +277,7 @@ ALTER TABLE `transaksi`
 -- AUTO_INCREMENT untuk tabel `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT untuk tabel `user_level`
@@ -274,13 +300,13 @@ ALTER TABLE `chat`
 -- Ketidakleluasaan untuk tabel `design_barang`
 --
 ALTER TABLE `design_barang`
-  ADD CONSTRAINT `c5` FOREIGN KEY (`id_jenis`) REFERENCES `jenis_barang` (`id_jenis`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `c5` FOREIGN KEY (`id_jenis`) REFERENCES `katalog` (`id_jenis`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ketidakleluasaan untuk tabel `detail_transaksi`
 --
 ALTER TABLE `detail_transaksi`
-  ADD CONSTRAINT `c2` FOREIGN KEY (`id_jenis`) REFERENCES `jenis_barang` (`id_jenis`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `c2` FOREIGN KEY (`id_jenis`) REFERENCES `katalog` (`id_jenis`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `c3` FOREIGN KEY (`id_transaksi`) REFERENCES `transaksi` (`id_transaksi`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `c4` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`) ON DELETE CASCADE ON UPDATE CASCADE;
 
